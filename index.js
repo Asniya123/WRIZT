@@ -9,19 +9,8 @@ const app=express()
 const port=process.env.PORT||3000
 const mongoose=require('mongoose')
 
-async function  db_connect(){
-try {
- await mongoose.connect("mongodb://127.0.0.1:27017/wrizt")
 
- 
-//  console.log("databas connected")
-  
-} catch (error) {
-  console.log("connected");
-  
-}
-}
-db_connect();
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 
