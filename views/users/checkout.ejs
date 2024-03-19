@@ -87,7 +87,7 @@
 
                                                     <% } } else { %>
                                                         <div class="col-6 col-md-4 col-xl-3">
-                                                            <p>No Coupon Found found</p>
+                                                            <p>No Coupon Found </p>
                                                         </div>
                                                         <% } %>
 
@@ -287,9 +287,9 @@
 
 
 
-                                    <% if (cart.length>0) {
-                                        cart.forEach((cartData,index)=>{
-                                        %>
+                                    <% if (cart && cart.length > 0) { %>
+                                        <% cart.forEach((cartData,index) => { %>
+                                        
 
                                         <tr>
                                             <td class="image product-thumbnail">
@@ -427,7 +427,9 @@
             </div>
         </div>
 
-
+       <input type="number" id="retryTotal"  value="<%=retryTotal%>">
+       <input type="text" id="orderId" value="<%=orderId%>">
+     
 
 
     </main>
@@ -457,8 +459,9 @@
             const applyCouponButton = document.getElementById('applyCouponButton');
             const couponCodeInput = document.getElementById('couponCodeInput');
             const orderTotalElement = document.getElementById('totalAmount');
-
+            const retryTotal = document.getElementById('retryTotal').value
             const couponInfo = document.getElementById('couponInfo');
+            const orderId = document.getElementById('orderId').value
 
             const couponCode = couponCodeInput.value;
 
@@ -544,7 +547,7 @@
 
                 const selectedAddress = document.querySelector('input[name="checkAddress"]:checked');
                 let selectedPaymentMethod = document.querySelector('input[name="payment_option"]:checked').value;
-
+                let orderId = document.getElementById('orderId').value
                 const couponCode = couponCodeInput.value;
 
                 if (!selectedAddress) {
@@ -564,7 +567,8 @@
                     couponCode,
                     address: address,
                     paymentMethod: selectedPaymentMethod,
-
+                    retryTotal:retryTotal
+ 
                 };
 
 
@@ -624,6 +628,7 @@
 
 
                 else if (selectedPaymentMethod == "onlinePayment") {
+                    
     let amount;
     fetch('/razorpayOrder', {
         method: 'POST',
@@ -647,7 +652,7 @@
                 handler: async function (response) {
                     console.log("Payment successful:", response);
                     if (response.razorpay_payment_id) {
-                        const createOrderResponse = await fetch("/checkout", {
+                        const createOrderResponse = await fetch(`/checkout?orderId=${orderId}`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -667,7 +672,7 @@
                 modal: {
                     ondismiss: async function () {
                         console.log("Payment modal was closed without completing the payment.");
-                        const createOrderResponse = await fetch("/checkout", {
+                        const createOrderResponse = await fetch(`/checkout?orderId=${orderId}`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",

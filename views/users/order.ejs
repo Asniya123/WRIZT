@@ -99,17 +99,22 @@
                                                 
 
                                                 <tbody>
+                                                    <% let displayedOrders = []; %>
                                                     <% orders.slice().reverse().forEach(function(order_data) { %>
-                                                        <tr>
-                                                            <td><%= order_data.orderId %></td>
-                                                            <td><%= new Date(order_data.orderDate).toLocaleDateString() %></td>
-                                                            <td><%= new Date(order_data.deliveryDate).toLocaleDateString() %></td>
-                                                            <td><%= order_data.status %></td>
-                                                            <td><%= order_data.totalAmount %></td>
-                                                            <td><a href="/orderDetails/<%= order_data._id %>" class="btn-small d-block">View</a></td>
-                                                        </tr>
+                                                        <% if (!displayedOrders.includes(order_data.orderId)) { %>
+                                                            <% displayedOrders.push(order_data.orderId); %>
+                                                            <tr>
+                                                                <td><%= order_data.orderId %></td>
+                                                                <td><%= new Date(order_data.orderDate).toLocaleDateString() %></td>
+                                                                <td><%= new Date(order_data.deliveryDate).toLocaleDateString() %></td>
+                                                                <td><%= order_data.status %></td>
+                                                                <td><%= order_data.totalAmount %></td>
+                                                                <td><a href="/orderDetails/<%= order_data._id %>" class="btn-small d-block">View</a></td>
+                                                            </tr>
+                                                        <% } %>
                                                     <% }) %>
                                                 </tbody>
+                                                
                                                 
 
 

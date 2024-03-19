@@ -129,14 +129,23 @@
    
 
            
-        <div id="invalid">
-          <% if (typeof message !=='undefined' && message) { %>
-              <p style="color: red;" id="message">
-                  <%= message %>
+        <div id="errorMessage">
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+              <p class="text-danger" id="message">
+                <%= errorMessage %>
               </p>
-              <% } %>
-                            
-      </div>
+            <% } %>
+          </div>
+          
+        
+        <!-- Display Success Message -->
+        <div id="successMessage">
+            <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+                <p style="color: rgb(8, 96, 0);" id="message">
+                    <%= successMessage %>
+                </p>
+            <% } %>
+        </div>
           
         
         </div> 
@@ -170,15 +179,18 @@
         document.getElementById('discountType-error').textContent = 'Discount Type is required.';
       }
   
-      // Validation for discount
-      const discountValue = document.getElementById('discount').value.trim();
-      if (!discountValue) {
-        isValid = false;
-        document.getElementById('discount-error').textContent = 'Discount is required.';
-      } else if (parseFloat(discountValue) < 0) {
-        isValid = false;
-        document.getElementById('discount-error').textContent = 'Discount cannot be negative.';
-      }
+       // Validation for discount
+       const discountValue = document.getElementById('discount').value.trim();
+        if (!discountValue) {
+            isValid = false;
+            document.getElementById('discount-error').textContent = 'Discount is required.';
+        } else if (parseFloat(discountValue) < 0) {
+            isValid = false;
+            document.getElementById('discount-error').textContent = 'Discount cannot be negative.';
+        } else if (parseFloat(discountValue) > 100) { // Add validation for discount <= 100
+            isValid = false;
+            document.getElementById('discount-error').textContent = 'Discount cannot be greater than 100%.';
+        }
   
       // Validation for maxRedeemableAmt
       const maxRedeemableAmt = document.getElementById('maxReadeemableAmt').value.trim();
@@ -228,6 +240,7 @@
         isValid = false;
         document.getElementById('expiryDate-error').textContent = 'Expiry Date is required.';
       }
+
   
       // Prevent form submission if validation fails
       if (!isValid) {

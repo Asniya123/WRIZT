@@ -147,7 +147,7 @@ const loadHome = async (req, res) => {
     const totalProducts = await Product.countDocuments();
     const totalCategories = await Category.countDocuments();
     const orders = await Order.find().populate("user").limit(10).sort({ orderDate: -1 });
-
+    
     const totalRevenues = orders.reduce((acc, order) => acc + order.totalAmount, 0);
 
     // Get the last 4 registered users
@@ -175,6 +175,12 @@ const loadHome = async (req, res) => {
     const bestSellingProducts = await fetchBestSellingProducts();
     const bestSellingCategories = await fetchBestSellingCategories();
 
+   
+    const order = await Order.find({}); 
+    const user = await User.find({}); // Fetch a recent or specific user
+    const product = await Product.find({}); // Fetch a featured or specific product
+
+
     res.render("home", {
       admin: adminData,
       totalRevenues,
@@ -192,6 +198,9 @@ const loadHome = async (req, res) => {
       yearlyOrderCounts: yearlyDataArray.map((item) => item.count),
       bestSellingProducts,
       bestSellingCategories,
+      order,
+      user,
+      product
     });
   } catch (error) {
     console.log(error.message);

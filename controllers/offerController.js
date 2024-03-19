@@ -8,7 +8,12 @@ const loadOfferAdd = async (req, res) => {
     const admin = req.session.adminData;
     const product = await Product.find().sort({ date: -1 });
     const category = await Category.find().sort({ date: -1 });
-    res.render("addOffer", { admin, product, category });
+
+    // Initialize an empty errors object
+    const errors = {};
+
+    // Render the addOffer template with admin data, products, categories, and errors
+    res.render("addOffer", { admin, product, category, errors });
   } catch (error) {
     console.log(error.message);
   }
@@ -16,9 +21,10 @@ const loadOfferAdd = async (req, res) => {
 
 const addOffer = async (req, res) => {
   try {
-    console.log('dsafhsdfkajdhsfkjahdhfkjh');
     const admin = req.session.admin_id;
- 
+    const category = await Category.find().sort({ date: -1 });
+    const product = await Product.find().sort({ date: -1 });
+
     const {
       name,
       discountValue,
@@ -38,33 +44,26 @@ const addOffer = async (req, res) => {
       discountedCategory && (await Offer.findOne({ discountedCategory }));
     const existingProductOffer =
       discountedProduct && (await Offer.findOne({ discountedProduct }));
+      if (existingNameOffer) {
 
-    if (existingNameOffer) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "Duplicate Discount Name not allowed.",
-        });
-    }
-
-    if (discountedCategory && existingCategoryOffer) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "An offer for this category already exists.",
-        });
-    }
-
-    if (discountedProduct && existingProductOffer) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "An offer for this product already exists.",
-        });
-    }
+        return res.render("addOffer", {
+          errorMessage: "Duplicate Discount Name not allowed.",category,product
+      });
+       
+      }
+  
+      if (discountedCategory && existingCategoryOffer) {
+        return res.render("addOffer", {
+          errorMessage: "An offer for this category already exists.",category,product
+      });
+      }
+  
+      if (discountedProduct && existingProductOffer) {
+        return res.render("addOffer", {
+          errorMessage: "An offer for this product already exists.",category,product
+      });
+      }
+  
     const newOffer = new Offer({
       name: name,
       discountOn,
@@ -154,12 +153,7 @@ const addOffer = async (req, res) => {
     return res.redirect("/admin/offerList");
   } catch (error) {
     console.log(error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        error: "An error occurred while adding the offer",
-      });
+  
   }
 };
 
